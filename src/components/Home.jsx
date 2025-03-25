@@ -204,123 +204,136 @@ const Home = () => {
                 <section className="mb-10">
                     <h2 className="text-2xl font-bold mb-4">Discover Music</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {songs.map((song) => (
-                            <div
-                                key={song.id}
-                                className={`flex flex-col ${darkMode ? 'bg-black' : 'bg-white'} rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 group`}
-                            >
-                                <div className="relative">
-                                    <img
-                                        src={song.image?.[2]?.url || '/placeholder.jpg'}
-                                        alt={song.name}
-                                        className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <button
-                                            onClick={() => handlePlayPause(song)}
-                                            className="p-4 bg-green-600 hover:bg-green-500 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110"
-                                        >
-                                            {currentSong === song.id && isPlaying ? <Pause size={24} /> : <Play size={24} />}
-                                        </button>
+                        {loading
+                            ? [...Array(6)].map((_, index) => (
+                                <div
+                                    key={index}
+                                    className={`flex flex-col ${darkMode ? "bg-black" : "bg-white"} rounded-xl overflow-hidden shadow-lg animate-pulse`}
+                                >
+                                    <div className="w-full h-48 bg-gray-300 dark:bg-gray-700"></div>
+                                    <div className="p-4 flex-1">
+                                        <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
                                     </div>
                                 </div>
-
-                                <div className="p-4 flex-1 flex flex-col">
-                                    <h3 className="text-xl font-bold line-clamp-1">{song.name}</h3>
-                                    <p className="text-gray-400 mb-3">{song.artists?.primary?.[0]?.name || "Unknown Artist"}</p>
-
-                                    <div className="mt-auto flex justify-between items-center">
-                                        <button
-                                            onClick={() => toggleFavorite(song)}
-                                            className={`p-2 rounded-full ${favorites.some(fav => fav.id === song.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'} transition-colors`}
-                                            title="Add to favorites"
-                                        >
-                                            <Heart fill={favorites.some(fav => fav.id === song.id) ? "currentColor" : "none"} size={20} />
-                                        </button>
-
-                                        <div className="relative">
+                            ))
+                            : songs.map((song) => (
+                                <div
+                                    key={song.id}
+                                    className={`flex flex-col ${darkMode ? 'bg-black' : 'bg-white'} rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 group`}
+                                >
+                                    <div className="relative">
+                                        <img
+                                            src={song.image?.[2]?.url || '/placeholder.jpg'}
+                                            alt={song.name}
+                                            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             <button
-                                                onClick={() => togglePlaylistMenu(song.id)}
-                                                className="p-2 text-gray-400 hover:text-blue-400 rounded-full transition-colors"
-                                                title="Add to playlist"
+                                                onClick={() => handlePlayPause(song)}
+                                                className="p-4 bg-green-600 hover:bg-green-500 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110"
                                             >
-                                                <PlusCircle size={20} />
+                                                {currentSong === song.id && isPlaying ? <Pause size={24} /> : <Play size={24} />}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-4 flex-1 flex flex-col">
+                                        <h3 className="text-xl font-bold line-clamp-1">{song.name}</h3>
+                                        <p className="text-gray-400 mb-3">{song.artists?.primary?.[0]?.name || "Unknown Artist"}</p>
+
+                                        <div className="mt-auto flex justify-between items-center">
+                                            <button
+                                                onClick={() => toggleFavorite(song)}
+                                                className={`p-2 rounded-full ${favorites.some(fav => fav.id === song.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'} transition-colors`}
+                                                title="Add to favorites"
+                                            >
+                                                <Heart fill={favorites.some(fav => fav.id === song.id) ? "currentColor" : "none"} size={20} />
                                             </button>
 
-                                            {/* Playlist Dropdown */}
-                                            {showPlaylistMenu === song.id && (
-                                                <div
-                                                    ref={playlistMenuRef}
-                                                    className="absolute bottom-full right-[-1] mb-2 w-56 bg-gray-800 rounded-lg shadow-xl z-10 py-2 border border-gray-700"
+                                            <div className="relative">
+                                                <button
+                                                    onClick={() => togglePlaylistMenu(song.id)}
+                                                    className="p-2 text-gray-400 hover:text-blue-400 rounded-full transition-colors"
+                                                    title="Add to playlist"
                                                 >
-                                                    <div className="px-3 py-2 border-b border-gray-700 flex justify-between items-center">
-                                                        <span className="font-medium">Add to playlist</span>
-                                                        <button
-                                                            onClick={() => setShowPlaylistMenu(null)}
-                                                            className="text-gray-400 hover:text-white"
-                                                        >
-                                                            <X size={16} />
-                                                        </button>
-                                                    </div>
+                                                    <PlusCircle size={20} />
+                                                </button>
 
-                                                    {Object.keys(playlists).map((playlistName) => (
-                                                        <button
-                                                            key={playlistName}
-                                                            onClick={() => addToPlaylist(song, playlistName)}
-                                                            className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
-                                                        >
-                                                            <span>{playlistName}</span>
-                                                            {playlists[playlistName].some(s => s.id === song.id) && (
-                                                                <Check size={16} className="text-green-500" />
-                                                            )}
-                                                        </button>
-                                                    ))}
-
-                                                    {showNewPlaylistInput ? (
-                                                        <div className="px-3 py-2 flex items-center">
-                                                            <input
-                                                                type="text"
-                                                                placeholder="Playlist name"
-                                                                value={newPlaylistName}
-                                                                onChange={(e) => setNewPlaylistName(e.target.value)}
-                                                                onKeyPress={(e) => e.key === 'Enter' && createNewPlaylist()}
-                                                                className="flex-1 px-2 py-1 bg-gray-700 rounded text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                                autoFocus
-                                                            />
+                                                {/*------------------- Playlist Dropdown--------------- */}
+                                                {showPlaylistMenu === song.id && (
+                                                    <div
+                                                        ref={playlistMenuRef}
+                                                        className="absolute bottom-full right-0 mb-2 w-56 bg-gray-800 rounded-lg shadow-xl z-10 py-2 border border-gray-700"
+                                                    >
+                                                        <div className="px-3 py-2 border-b border-gray-700 flex justify-between items-center">
+                                                            <span className="font-medium">Add to playlist</span>
                                                             <button
-                                                                onClick={createNewPlaylist}
-                                                                className="ml-2 p-1 text-green-500 hover:text-green-400"
+                                                                onClick={() => setShowPlaylistMenu(null)}
+                                                                className="text-gray-400 hover:text-white"
                                                             >
-                                                                <Check size={16} />
+                                                                <X size={16} />
                                                             </button>
-                                                            ${darkMode ? 'bg-black' : 'bg-white'}</div>
-                                                    ) : (
-                                                        <button
-                                                            onClick={() => setShowNewPlaylistInput(true)}
-                                                            className="w-full text-left px-4 py-2 text-blue-400 hover:bg-gray-700 flex items-center"
-                                                        >
-                                                            <PlusCircle size={16} className="mr-2" />
-                                                            <span>Create new playlist</span>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
+                                                        </div>
 
-                                        <button
-                                            onClick={() => handlePlayPause(song)}
-                                            className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-full flex items-center font-medium text-sm"
-                                        >
-                                            {currentSong === song.id && isPlaying ? "Pause" : "Play"}
-                                        </button>
+                                                        {Object.keys(playlists).map((playlistName) => (
+                                                            <button
+                                                                key={playlistName}
+                                                                onClick={() => addToPlaylist(song, playlistName)}
+                                                                className="w-full text-left px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
+                                                            >
+                                                                <span>{playlistName}</span>
+                                                                {playlists[playlistName].some(s => s.id === song.id) && (
+                                                                    <Check size={16} className="text-green-500" />
+                                                                )}
+                                                            </button>
+                                                        ))}
+
+                                                        {showNewPlaylistInput ? (
+                                                            <div className="px-3 py-2 flex items-center">
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Playlist name"
+                                                                    value={newPlaylistName}
+                                                                    onChange={(e) => setNewPlaylistName(e.target.value)}
+                                                                    onKeyPress={(e) => e.key === 'Enter' && createNewPlaylist()}
+                                                                    className="flex-1 px-2 py-1 bg-gray-700 rounded text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                                    autoFocus
+                                                                />
+                                                                <button
+                                                                    onClick={createNewPlaylist}
+                                                                    className="ml-2 p-1 text-green-500 hover:text-green-400"
+                                                                >
+                                                                    <Check size={16} />
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => setShowNewPlaylistInput(true)}
+                                                                className="w-full text-left px-4 py-2 text-blue-400 hover:bg-gray-700 flex items-center"
+                                                            >
+                                                                <PlusCircle size={16} className="mr-2" />
+                                                                <span>Create new playlist</span>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <button
+                                                onClick={() => handlePlayPause(song)}
+                                                className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-full flex items-center font-medium text-sm"
+                                            >
+                                                {currentSong === song.id && isPlaying ? "Pause" : "Play"}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 </section>
 
-                {/* Playlists songs */}
+                {/* -----------------------------Playlists songs ---------------------------------*/}
                 <section className="mb-10">
                     <h2 className="text-2xl font-bold mb-4">Your Playlists</h2>
 
@@ -398,7 +411,7 @@ const Home = () => {
                     )}
                 </section>
 
-                {/* Favorites  songs */}
+                {/*--------------------------- Favorites  songs ------------------------------*/}
                 <section className="mb-10">
                     <h2 className="text-2xl font-bold mb-4">Your Favorites</h2>
 
