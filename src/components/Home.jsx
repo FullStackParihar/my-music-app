@@ -43,6 +43,7 @@ const Home = () => {
             if (audioRef.current && currentSong) {
                 setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
             }
+
         };
 
         audioRef.current.addEventListener("timeupdate", updateProgress);
@@ -90,6 +91,7 @@ const Home = () => {
             setIsPlaying(!isPlaying);
         } else {
             audioRef.current.src = songUrl;
+            audioRef.current.load();
             audioRef.current.play();
             setCurrentSong(song.id);
             setIsPlaying(true);
@@ -466,7 +468,7 @@ const Home = () => {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                             <button
-                                onClick={() => setIsPlaying(!isPlaying)}
+                                onClick={() => handlePlayPause(songs.find(s => s.id === currentSong))}
                                 className="p-3 bg-green-600 hover:bg-green-500 rounded-full"
                             >
                                 {isPlaying ? <Pause size={20} /> : <Play size={20} />}
