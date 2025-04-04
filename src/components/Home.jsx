@@ -240,7 +240,7 @@ const Home = () => {
                                             </button>
                                         </div>
                                     </div>
-
+ 
                                     <div className="p-4 flex-1 flex flex-col">
                                         <h3 className="text-xl font-bold line-clamp-1">{song.name}</h3>
                                         <p className="text-gray-400 mb-3">{song.artists?.primary?.[0]?.name || "Unknown Artist"}</p>
